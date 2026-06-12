@@ -1,0 +1,14 @@
+CAPI=2:
+name: hardmatrix:examples:axis_if:2.0.0
+description: AXI4-Stream interface
+
+filesets:
+  rtl:
+    files:
+      - rtl/axis_if.sv
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+      - rtl

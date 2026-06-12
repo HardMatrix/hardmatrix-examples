@@ -24,7 +24,7 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["examples*"]
+include = ["utils*"]
 
 [tool.regression]
 core-pattern = "^hardmatrix:examples:"

@@ -12,4 +12,4 @@ pip install -e .
 
 ## Layout
 
-Examples should live under `examples/` and include their own short README with the command needed to run them.
+Examples should live under `hw/` and include their own short README with the command needed to run them.
