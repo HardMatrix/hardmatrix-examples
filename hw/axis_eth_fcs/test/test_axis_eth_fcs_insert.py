@@ -73,7 +73,7 @@ def random_packet(min_size=1, max_size=256):
 async def test_axis_eth_fcs_insert_scoreboard(dut):
     tb = AxisEthFcsInsertTester(dut)
     await tb.reset(10)
-    tb.start_no_backpressure()
+    tb.start_random_backpressure()
 
     tb.monitor_in.add_callback(tb.build_expected_output)
     tb.scoreboard.add_interface(tb.monitor_out, tb.expected_data)
