@@ -1,0 +1,44 @@
+CAPI=2:
+name: hardmatrix:examples:axis_eth_fcs_insert:0.1.0
+description: AXI4-Stream Ethernet FCS inserter
+
+filesets:
+  rtl:
+    files:
+      - rtl/eth_crc32_byte.sv
+      - rtl/axis_eth_fcs_insert.sv
+    file_type: systemVerilogSource
+    depend:
+      - hardmatrix:examples:axis_if:2.0.0
+
+  test:
+    files:
+      - test/test_axis_eth_fcs_insert.py: {copyto: .}
+      - test/tb_axis_eth_fcs_insert.sv: {file_type: systemVerilogSource}
+
+targets:
+  default: &default
+    toplevel: [axis_eth_fcs_insert]
+    filesets:
+      - rtl
+
+  lint:
+    <<: *default
+    filesets_append: [test]
+    toplevel: [tb_axis_eth_fcs_insert]
+    flow: lint
+    flow_options:
+      tool: verilator
+      verilator_options: ["-Wall"]
+
+  test: &test
+    <<: *default
+    filesets_append: [test]
+    toplevel: [tb_axis_eth_fcs_insert]
+    flow: sim
+    flow_options:
+      tool: verilator
+      cocotb_module: test_axis_eth_fcs_insert
+      verilator_options: [--trace --output-split 15000 --trace-fst --trace-structs --assert]
+      make_options: [-j8]
+      run_options: [--trace]
