@@ -1,0 +1,41 @@
+## Test: verify Verilated VAM peripheral in Renode
+## Direct sysbus access to co-simulated peripheral (no CPU needed)
+##
+## Usage: renode --disable-xwt --console -e "include @renode/resc/vam_regtest.resc"
+## Expected output: STATUS=0x1, results={0xB, 0x16, 0x21, 0x2C} = {11, 22, 33, 44}
+
+mach create "test"
+machine LoadPlatformDescription @renode/platform.repl
+vam SimulationFilePathLinux @renode/verilator/libVverilated_vam.so
+
+# Write vec[0] = {10, 20, 30, 40}
+sysbus WriteDoubleWord 0x40000100 10
+sysbus WriteDoubleWord 0x40000104 20
+sysbus WriteDoubleWord 0x40000108 30
+sysbus WriteDoubleWord 0x4000010C 40
+
+# Write vec[1] = {1, 2, 3, 4}
+sysbus WriteDoubleWord 0x40000110 1
+sysbus WriteDoubleWord 0x40000114 2
+sysbus WriteDoubleWord 0x40000118 3
+sysbus WriteDoubleWord 0x4000011C 4
+
+# Clear status
+sysbus WriteDoubleWord 0x40000004 0x4
+
+# ADD: vec[0] + vec[1] -> vec[2]
+# Instruction encoding: op=1 | rega=0<<8 | regb=1<<11 | dest=2<<14 = 0x8801
+sysbus WriteDoubleWord 0x40000000 0x8801
+
+# Poll status until done (pipeline needs a few cycles)
+sysbus ReadDoubleWord 0x40000004
+sysbus ReadDoubleWord 0x40000004
+sysbus ReadDoubleWord 0x40000004
+
+# Read results: vec[2] = {11, 22, 33, 44}
+sysbus ReadDoubleWord 0x40000120
+sysbus ReadDoubleWord 0x40000124
+sysbus ReadDoubleWord 0x40000128
+sysbus ReadDoubleWord 0x4000012C
+
+quit

@@ -1,0 +1,39 @@
+:name: tensor-soc
+:description: RISC-V SoC with Linux, tensor.ko driver, and Verilator-cosimulated VAM
+
+# Create and configure machine
+mach create "tensor-soc"
+machine LoadPlatformDescription @renode/platform.repl
+
+# Set Verilator co-simulation library for VAM
+vam SimulationFilePathLinux @renode/verilator/libVverilated_vam.so
+
+# Boot sequence: OpenSBI fw_jump → Linux kernel → initramfs (embedded in Image)
+#
+# Images are copied from ~/buildroot/output/images/ by build.sh
+# Run: renode/buildroot/build.sh full && renode/buildroot/build.sh install
+
+# 1. OpenSBI firmware (raw binary at RAM base — ELF is PIE, can't be used directly)
+sysbus LoadBinary @renode/images/fw_jump.bin 0x80000000
+
+# 2. Linux kernel with embedded initramfs
+sysbus LoadBinary @renode/images/Image 0x80200000
+
+# 3. Device tree blob — address must match OpenSBI FW_JUMP_FDT_ADDR
+sysbus LoadFdt @renode/images/tensor_soc.dtb 0x88000000 "earlycon=sbi console=ttyS0"
+
+# 4. Set boot registers: PC=OpenSBI entry, a0=hartid, a1=DTB address
+cpu PC 0x80000000
+cpu SetRegisterUnsafe 10 0
+cpu SetRegisterUnsafe 11 0x88000000
+
+# Console on uart0 (for debug / kernel boot messages)
+showAnalyzer uart0
+
+# Data channel: uart1 exposed as TCP socket on port 9001 (raw, no telnet)
+# Host PyTorch C++ extension connects here for remote backend
+emulation CreateServerSocketTerminal 9001 "data_uart" false
+connector Connect uart1 data_uart
+
+logLevel 1
+start

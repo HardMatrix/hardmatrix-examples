@@ -1,0 +1,35 @@
+:name: tensor-soc-boot-test
+:description: Headless Linux boot test (no VAM co-sim, just check kernel + driver)
+
+# Create machine
+mach create "tensor-soc"
+machine LoadPlatformDescription @renode/platform.repl
+
+# Set Verilator co-simulation library for VAM
+vam SimulationFilePathLinux @renode/verilator/libVverilated_vam.so
+
+# 1. OpenSBI firmware (raw binary, loaded at RAM base)
+sysbus LoadBinary @renode/images/fw_jump.bin 0x80000000
+
+# 2. Linux kernel with embedded initramfs
+sysbus LoadBinary @renode/images/Image 0x80200000
+
+# 3. Device tree blob — address must match OpenSBI FW_JUMP_FDT_ADDR
+sysbus LoadFdt @renode/images/tensor_soc.dtb 0x88000000 "earlycon=sbi console=ttyS0"
+
+# 4. RISC-V boot registers: PC=OpenSBI entry, a0=hartid=0, a1=DTB address
+cpu PC 0x80000000
+cpu SetRegisterUnsafe 10 0
+cpu SetRegisterUnsafe 11 0x88000000
+
+# Log Renode monitor/runtime output and guest uart0 output in repo-local out/
+logFile $ORIGIN/../../out/renode-monitor.log
+uart0 CreateFileBackend $ORIGIN/../../out/tensor_soc_uart0.log true
+
+# Data channel on TCP:9001
+emulation CreateServerSocketTerminal 9001 "data_uart" false
+connector Connect uart1 data_uart
+
+logLevel 1
+logLevel 1 file
+start

@@ -1,0 +1,23 @@
+#!/bin/sh
+# init — PID 1 init script for Renode Linux
+# Mounts filesystems, loads the tensor driver, starts the relay.
+
+mount -t devtmpfs devtmpfs /dev
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+
+echo "init: loading tensor.ko"
+insmod /lib/modules/tensor.ko
+sleep 1
+
+if [ ! -c /dev/tensor0 ]; then
+    echo "init: ERROR - /dev/tensor0 not found"
+    echo "init: dropping to shell"
+    exec /bin/sh
+fi
+
+echo "init: setting ttyS1 raw mode"
+stty -F /dev/ttyS1 raw -echo
+
+echo "init: starting relay"
+exec /sbin/relay

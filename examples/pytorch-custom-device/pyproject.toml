@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=69", "wheel", "torch>=2.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pytorch-custom-device-example"
+version = "0.1.0"
+description = "Full-stack example connecting a PyTorch custom device to an RTL accelerator"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "numpy>=2,<3",
+    "torch>=2.9,<2.10",
+]
+
+[dependency-groups]
+dev = [
+    "ninja>=1.11",
+    "pytest>=8.4,<9",
+    "fusesoc>=2.4",
+    "cocotb>=2.0",
+    "cocotb-bus>=0.3",
+    "peakrdl-regblock>=1.3.1",
+    "peakrdl-python-simple>=0.2",
+]
+
+[tool.uv]
+no-build-isolation-package = ["pytorch-custom-device-example"]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.setuptools.packages.find]
+include = ["mydev*"]

@@ -1,0 +1,75 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Python tooling
+.venv/
+.uv-cache/
+.python-version
+.torch_extensions/
+
+# Build outputs
+build/
+dist/
+*.egg-info/
+
+# C++ build trees
+cpp/ops/build/
+cpp/ops/cmake-build*/
+
+# Kernel module build outputs
+cpp/driver/*.o
+cpp/driver/*.ko
+cpp/driver/*.mod
+cpp/driver/*.mod.c
+cpp/driver/*.mod.o
+cpp/driver/.*.cmd
+cpp/driver/src/*.o
+cpp/driver/src/.*.cmd
+cpp/driver/Module.symvers
+cpp/driver/modules.order
+cpp/driver/.tmp_versions/
+
+# Chisel / Mill build artifacts
+out/
+hw/chisel/**/out/
+hw/chisel/**/.bsp/
+hw/chisel/**/.mill-version
+hw/chisel/**/.mill-jvm-opts
+!hw/chisel/**/.mill-jvm-opts
+hw/chisel/**/filelist.f
+hw/chisel/**/verification/
+hw/chisel/**/target/
+hw/chisel/**/project/target/
+hw/chisel/**/generated/
+# Chisel-generated SV at project root (should be in generated/ via FuseSoC)
+hw/chisel/**/VectorAdderMachine.sv
+hw/chisel/**/VectorAdderUnit.sv
+!hw/chisel/**/src/*.sv
+
+# Verilator build artifacts
+obj_dir/
+renode/verilator/obj_dir/
+
+# Cross-compiled binaries (intermediate — final copy is in overlay/)
+renode/relay/relay
+renode/buildroot/overlay/sbin/relay
+renode/buildroot/overlay/lib/modules/*.ko
+renode/images/fw_jump.elf
+
+# FuseSoC generated
+fusesoc.conf
+.fusesoc_libraries/
+fusesoc_libraries/
+
+# Renode runtime artifacts
+.renode-xdg/
+.renode-remote-test.log
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp

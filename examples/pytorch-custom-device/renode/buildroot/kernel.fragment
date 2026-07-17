@@ -1,0 +1,27 @@
+# Kernel config fragment for tensor-soc
+# Applied on top of RISC-V arch default config
+
+# Serial console (NS16550 / 8250 UART)
+CONFIG_SERIAL_8250=y
+CONFIG_SERIAL_8250_CONSOLE=y
+CONFIG_SERIAL_OF_PLATFORM=y
+
+# Device management
+CONFIG_DEVTMPFS=y
+CONFIG_DEVTMPFS_MOUNT=y
+
+# Loadable modules (for tensor.ko)
+CONFIG_MODULES=y
+CONFIG_MODULE_UNLOAD=y
+
+# Misc devices (tensor.ko uses misc_register)
+CONFIG_MISC_DEVICES=y
+
+# Initramfs support
+CONFIG_BLK_DEV_INITRD=y
+
+# Platform devices (tensor.ko is a platform_driver)
+CONFIG_OF=y
+CONFIG_OF_ADDRESS=y
+
+# Keep kernel small — disable unused subsystems via menuconfig if needed

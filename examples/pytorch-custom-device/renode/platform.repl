@@ -1,0 +1,33 @@
+// Renode platform description for tensor-soc
+// RISC-V 64-bit SoC with dual UART and Verilator-cosimulated VAM
+
+cpu: CPU.RiscV64 @ sysbus
+    cpuType: "rv64gc_zicsr_zifencei"
+    timeProvider: clint
+
+ram: Memory.MappedMemory @ sysbus 0x80000000
+    size: 0x10000000   // 256 MB
+
+clint: IRQControllers.CoreLevelInterruptor @ sysbus 0x02000000
+    frequency: 100000000
+    [0,1] -> cpu@[3,7]
+
+plic: IRQControllers.PlatformLevelInterruptController @ sysbus 0x0C000000
+    [0,1] -> cpu@[11,9]
+    numberOfSources: 32
+    numberOfContexts: 2
+    prioritiesEnabled: true
+
+// Console UART (debug/boot logs)
+uart0: UART.NS16550 @ sysbus 0x10000000
+    -> plic@1
+
+// Data UART (relay <-> host communication)
+uart1: UART.NS16550 @ sysbus 0x10001000
+    -> plic@2
+
+// Vector Adder Machine — Verilator co-simulated peripheral
+// Address range: 0x40000000 to 0x400001FF (512 bytes)
+vam: CoSimulated.CoSimulatedPeripheral @ sysbus <0x40000000, +0x200>
+    frequency: 100000000
+    limitBuffer: 100000

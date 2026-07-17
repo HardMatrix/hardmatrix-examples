@@ -1,0 +1,31 @@
+import mill._
+import mill.scalalib._
+
+object vector_adder_machine extends SbtModule {
+  override def millSourcePath = super.millSourcePath / os.up
+  // Sources are located in the 'src' directory relative to this build.mill file.
+  override def sources = T.sources(millSourcePath / "src")
+
+  override def scalaVersion = "2.13.16"
+  def chiselVersion = "7.4.0"
+
+  override def scalacOptions = Seq(
+    "-language:reflectiveCalls",
+    "-deprecation",
+    "-feature",
+    "-Xcheckinit",
+    "-Ymacro-annotations",
+  )
+  override def ivyDeps = Agg(
+    ivy"org.chipsalliance::chisel:$chiselVersion",
+  )
+  override def scalacPluginIvyDeps = Agg(
+    ivy"org.chipsalliance:::chisel-plugin:$chiselVersion",
+  )
+  // No tests defined yet for vector_adder_machine
+  // object test extends SbtTests with TestModule.ScalaTest {
+  //   override def ivyDeps = super.ivyDeps() ++ Agg(
+  //     ivy"org.scalatest::scalatest::3.2.19"
+  //   )
+  // }
+}

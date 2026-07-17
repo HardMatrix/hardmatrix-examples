@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hardmatrix-examples"
+version = "0.1.0"
+description = "Public examples, demos, and companion code showcasing HardMatrix projects and workflows."
+authors = [{ name = "HardMatrix" }]
+readme = "README.md"
+dependencies = [
+    "pytest",
+    "cocotb",
+    "cocotb-bus@git+https://github.com/cocotb/cocotb-bus",
+    "fusesoc",
+]
+
+[project.scripts]
+# Example repositories do not currently install command-line tools.
+
+[tool.setuptools]
+# Helps when a MANIFEST.in is present; harmless otherwise
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["shared/python"]
+include = ["utils*"]
+
+[tool.regression]
+core-pattern = "^hardmatrix:examples:"

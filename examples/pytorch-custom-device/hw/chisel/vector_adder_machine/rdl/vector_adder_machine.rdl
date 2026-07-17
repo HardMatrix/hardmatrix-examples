@@ -1,0 +1,37 @@
+addrmap vector_adder_machine_regmap {
+    name = "Device Register Map";
+
+    default regwidth = 32;
+
+    reg {
+        name = "Instruction Register";
+        desc = "Register for issuing instructions";
+        field { sw = rw; hw = r; swmod; desc = "Operation code"; } op[8];
+        field { sw = rw; hw = r; desc = "Register A operand"; } rega[3];
+        field { sw = rw; hw = r; desc = "Register B operand"; } regb[3];
+        field { sw = rw; hw = r; desc = "Destination Register"; } dest[3];
+    } instruction @ 0x00;
+
+    reg status_reg {
+        name = "Status Register";
+        desc = "Hardware status: done/error flags set by HW, clear written by SW";
+        field { sw = r; hw = w; we = true; desc = "Operation complete"; } done[0:0] = 0;
+        field { sw = r; hw = w; we = true; desc = "Operation error"; } error[1:1] = 0;
+        field { sw = rw; hw = rw; we = true; desc = "Write 1 to clear done/error (auto-clears)"; } clear[2:2] = 0;
+    };
+    status_reg status @ 0x04;
+
+    reg vector_element_t {
+        name = "Vector Element";
+        desc = "Single 32-bit element of a vector";
+        field { sw = rw; hw = rw; we = true; } data[31:0];
+    };
+
+    regfile vector_reg_t {
+        name = "Vector Register File";
+        desc = "Collection of 4 elements forming a vector";
+        vector_element_t elems[4];
+    };
+
+    vector_reg_t vectors[8] @ 0x100;
+};

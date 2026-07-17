@@ -1,0 +1,63 @@
+CAPI=2:
+name: hardmatrix:accelerators:vector_adder_machine:0.1.0
+description: Vector Adder Machine
+
+filesets:
+  rtl:
+    files:
+      - src/vector_adder_machine_regmap_pkg.sv: {file_type: systemVerilogSource}
+      - src/vector_adder_machine_regmap_wrapper.sv: {file_type: systemVerilogSource}
+      - src/vector_adder_machine_regmap.sv: {file_type: systemVerilogSource}
+    depend: 
+      - fusesoc:utils:generators
+      - stratum:interfaces:axi4_lite:0.2.0
+
+  test:
+    files:
+      - test/test_vector_adder_machine.py: {copyto: .} # Add the new cocotb test file
+      - test/vector_adder_machine_rdl.py: {copyto: .}
+
+  test_socket:
+    files:
+      - test/test_vector_adder_machine_socket.py: {copyto: .}
+
+generate:
+  chiselgen:
+    generator: chisel
+    parameters:
+      buildtool: mill
+      copy_core: false
+      chiselproject: vector_adder_machine
+      output:
+        files:
+          - generated/VectorAdderMachine.sv: { file_type: systemVerilogSource }
+          - generated/VectorAdderUnit.sv: { file_type: systemVerilogSource }
+
+targets:
+  default: &default
+    toplevel: [VectorAdderMachine]
+    filesets: [rtl]
+    generate: [chiselgen]
+
+  test: &test
+    <<: *default
+    filesets_append: [test]
+    flow: sim
+    flow_options:
+      tool: verilator
+      cocotb_module: test_vector_adder_machine
+      # verilator_options: [--trace --trace-fst --trace-structs]
+      verilator_options: [--trace --timing, -Wno-MULTIDRIVEN, -Wno-WIDTHTRUNC, -Wno-WIDTHEXPAND]
+      make_options: [-j8]
+      run_options: [--trace]
+
+  test_socket:
+    <<: *default
+    filesets_append: [test, test_socket]
+    flow: sim
+    flow_options:
+      tool: verilator
+      cocotb_module: test_vector_adder_machine_socket
+      verilator_options: [--trace --timing, -Wno-MULTIDRIVEN, -Wno-WIDTHTRUNC, -Wno-WIDTHEXPAND]
+      make_options: [-j8]
+      run_options: [--trace]
