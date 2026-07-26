@@ -38,6 +38,7 @@ verilator-lib:
 
 relay:
 	$(MAKE) -C renode/relay
+	install -d renode/buildroot/overlay/sbin
 	install -m 0755 renode/relay/relay renode/buildroot/overlay/sbin/relay
 
 driver-riscv:
