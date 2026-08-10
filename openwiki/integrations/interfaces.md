@@ -9,9 +9,10 @@ tags: [integrations, abi, fusesoc, renode, axi]
 
 ## FuseSoC, Verilator, and cocotb
 
-Both examples package RTL through FuseSoC and simulate with Verilator/cocotb.
+All three examples package RTL through FuseSoC and simulate with Verilator/cocotb.
 
 - The FCS core depends on `hardmatrix:examples:axis_if:2.0.0` and receives core roots on the command line.
+- The [area-timing sweep](../domain/area-timing-sweep.md) core has independent ARX and RS filesets and exposes `PIPELINE_STAGES` to both simulation targets.
 - The Vector Adder Machine core depends on `fusesoc:utils:generators` and `stratum:interfaces:axi4_lite:0.2.0`; `fusesoc_setup.sh` initializes local libraries.
 - Chisel generation is a FuseSoC generator backed by Mill.
 

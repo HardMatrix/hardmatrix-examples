@@ -42,6 +42,25 @@ uv run fusesoc \
 See [`examples/axis-eth-fcs/README.md`](examples/axis-eth-fcs/README.md) for
 the files used by this example.
 
+## Area-timing sweep
+
+Run the ARX and Reed-Solomon Chien/Horner cocotb bring-up targets:
+
+```sh
+uv run fusesoc \
+  --config=fusesoc.conf \
+  --cores-root=examples/area-timing-sweep \
+  run --target test_arx hardmatrix:examples:area_timing_sweep:0.1.0
+
+uv run fusesoc \
+  --config=fusesoc.conf \
+  --cores-root=examples/area-timing-sweep \
+  run --target test_rs hardmatrix:examples:area_timing_sweep:0.1.0
+```
+
+See [`examples/area-timing-sweep/README.md`](examples/area-timing-sweep/README.md)
+for the RTL, tests, and synthesis sweep results.
+
 ## PyTorch custom-device tests
 
 The PyTorch example uses its own environment:
@@ -61,6 +80,7 @@ for host-driver and Renode test instructions.
 ```text
 examples/
   axis-eth-fcs/           Standalone AXI4-Stream Ethernet FCS RTL example
+  area-timing-sweep/      Pipeline depth versus area and timing experiment
   pytorch-custom-device/  Full-stack PyTorch custom-device example
 shared/
   rtl/                    RTL interfaces shared by examples

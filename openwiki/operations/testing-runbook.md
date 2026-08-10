@@ -17,13 +17,15 @@ There is no tracked GitHub Actions regression at HEAD. Commit `20a809c` added a 
 |---|---|---|---|
 | FCS simulation | Root: FuseSoC `--target test` | Packet CRC/FCS, `tlast`, random backpressure | uv, FuseSoC, Verilator, cocotb |
 | FCS lint | Root: FuseSoC `--target lint` | Verilator structural/style checks | uv, FuseSoC, Verilator |
+| ARX pipeline bring-up | Root: area-timing FuseSoC `--target test_arx` | 64-round reference equivalence and ordered one-per-cycle traffic | uv, FuseSoC, Verilator, cocotb |
+| RS Chien/Horner bring-up | Root: area-timing FuseSoC `--target test_rs` | GF polynomial values, root indication, and ordered one-per-cycle traffic after coefficient load | uv, FuseSoC, Verilator, cocotb |
 | Vector accelerator RTL | PyTorch example: `make test-hw` | AXI4-Lite/register behavior and vector operations | uv, JDK/Mill, FuseSoC, Verilator, cocotb |
 | Optional RDL socket | FuseSoC `--target test_socket` | Socket-based generated-register integration | Same as RTL test; not in `make test-hw` |
 | PyTorch mock | `make test-mock` after module load | PrivateUse1 registration, operators, local ioctl, mock driver | C++ toolchain, PyTorch env, matching kernel headers, root |
 | PyTorch remote | `make test-remote` | Host protocol → Renode guest → ioctl → Verilated hardware | Renode, IntegrationLibrary, checked-in guest artifacts |
 | Direct Renode register smoke | `vam_regtest.resc` | Platform/AXI/Verilated register behavior without Linux | Renode, Verilated library |
 
-The [FCS concept](../domain/axis-ethernet-fcs.md) describes its expected bytes; the [PyTorch custom device](../domain/pytorch-custom-device.md) defines the cross-layer semantics those tests protect.
+The [FCS concept](../domain/axis-ethernet-fcs.md) describes its expected bytes, the [area-timing sweep](../domain/area-timing-sweep.md) defines pipeline and coefficient-load contracts, and the [PyTorch custom device](../domain/pytorch-custom-device.md) defines the cross-layer semantics those tests protect.
 
 ## Safe mock-driver procedure
 
@@ -66,8 +68,16 @@ Useful logs from the historical CI and current test flow live under `examples/py
 
 ### FuseSoC cannot resolve a core
 
+- For area/timing tests, supply `--cores-root=examples/area-timing-sweep`; the core has no shared RTL dependency.
 - For FCS, ensure both `--cores-root=examples/axis-eth-fcs` and `--cores-root=shared/rtl/axis-if` are present.
 - For the vector machine, run `./fusesoc_setup.sh` from the PyTorch example before invoking its local `.venv/bin/fusesoc`.
+
+### Area/timing pipeline mismatch
+
+- Compare `arx_round` with `arx_model`, including fixed rotate amounts and width masking.
+- For RS, load coefficients before asserting `valid_i`; RTL intentionally drops otherwise-valid points until `coefficients_loaded` is true.
+- Preserve least-significant-slice-first coefficient packing and highest-coefficient-first Horner evaluation.
+- The testbenches check ordered results but do not currently assert exact latency, reset behavior, invalid parameter failures, coefficient reload during in-flight traffic, or multiple `PIPELINE_STAGES` values.
 
 ### CRC mismatch or premature packet end
 

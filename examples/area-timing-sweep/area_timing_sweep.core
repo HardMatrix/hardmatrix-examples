@@ -1,0 +1,53 @@
+CAPI=2:
+name: hardmatrix:examples:area_timing_sweep:0.1.0
+description: Parameterized pipeline area-timing sweep examples
+
+filesets:
+  arx_rtl:
+    files:
+      - rtl/arx_pipeline.sv
+    file_type: systemVerilogSource
+
+  rs_rtl:
+    files:
+      - rtl/rs_chien_horner_pipeline.sv
+    file_type: systemVerilogSource
+
+  arx_test:
+    files:
+      - test/test_arx_pipeline.py: {copyto: .}
+
+  rs_test:
+    files:
+      - test/test_rs_chien_horner_pipeline.py: {copyto: .}
+
+parameters:
+  PIPELINE_STAGES:
+    datatype: int
+    default: 4
+    paramtype: vlogparam
+
+targets:
+  test_arx:
+    filesets: [arx_rtl, arx_test]
+    toplevel: [arx_pipeline]
+    parameters: [PIPELINE_STAGES]
+    flow: sim
+    flow_options:
+      tool: verilator
+      cocotb_module: test_arx_pipeline
+      verilator_options: [-Wall, -Wno-UNOPTFLAT, --trace, --trace-structs, --assert]
+      make_options: [-j8]
+      run_options: [--trace]
+
+  test_rs:
+    filesets: [rs_rtl, rs_test]
+    toplevel: [rs_chien_horner_pipeline]
+    parameters: [PIPELINE_STAGES]
+    flow: sim
+    flow_options:
+      tool: verilator
+      cocotb_module: test_rs_chien_horner_pipeline
+      verilator_options: [-Wall, -Wno-UNOPTFLAT, --trace, --trace-structs, --assert]
+      make_options: [-j8]
+      run_options: [--trace]

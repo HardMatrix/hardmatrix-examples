@@ -18,6 +18,7 @@ Use this page to find the owning source before editing. Runtime relationships ar
 | `fusesoc.conf` | Minimal project config; core roots are supplied per command |
 | `shared/rtl/axis-if/` | Shared AXI4-Stream interface, modports, and assertions |
 | `shared/python/utils/tb_utils/` | Reusable cocotb AXI stream driver/monitor and traffic helpers |
+| `examples/area-timing-sweep/` | Independent fixed-work pipeline-depth experiment, cocotb bring-up, and checked-in synthesis observations |
 | `openwiki/INSTRUCTIONS.md` | User-authored OpenWiki scope; control metadata, not generated docs |
 
 Build outputs, `.venv`, caches, and `shared/python/*.egg-info` are not source.
@@ -34,6 +35,19 @@ Build outputs, `.venv`, caches, and `shared/python/*.egg-info` are not source.
 | `examples/axis-eth-fcs/README.md` | Local usage summary |
 
 Read [AXI Ethernet FCS](domain/axis-ethernet-fcs.md) for semantic hazards before changing these files.
+
+## Area-timing sweep
+
+| Path | Ownership |
+|---|---|
+| `examples/area-timing-sweep/rtl/arx_pipeline.sv` | ARX round function, parameter guards, work distribution, pipeline validity |
+| `examples/area-timing-sweep/rtl/rs_chien_horner_pipeline.sv` | Coefficient load state, GF multiplication, Horner-term distribution, root indication |
+| `examples/area-timing-sweep/area_timing_sweep.core` | FuseSoC `test_arx` and `test_rs` targets and public `PIPELINE_STAGES` parameter |
+| `examples/area-timing-sweep/test/test_arx_pipeline.py` | 64-round Python model and ordered streaming bring-up |
+| `examples/area-timing-sweep/test/test_rs_chien_horner_pipeline.py` | GF model, coefficient-load sequence, polynomial/root bring-up |
+| `examples/area-timing-sweep/results/` | Checked-in CSV/SVG post-synthesis observations; derived and not reproducible from this repository alone |
+
+Read [Area-timing sweep](domain/area-timing-sweep.md) before changing operation partitioning, validity latency, coefficient ordering, or interpreting synthesis data.
 
 ## PyTorch front end and extension
 
@@ -116,6 +130,6 @@ Do not make isolated fixes only in generated files. Regenerate from RDL/Scala an
 
 ## History-sensitive areas
 
-The current implementation was imported almost entirely in commit `20a809c`; there is little incremental blame history to explain individual design choices. Commit `23d937c` removed the self-hosted regression workflow, so do not infer active CI from untracked `.github/` content. Preserve reasoning in source docs and this wiki as workflows evolve.
+The original FCS and PyTorch implementation was imported almost entirely in commit `20a809c`; there is little incremental blame history to explain individual design choices. Commit `23d937c` removed the self-hosted regression workflow. Commit `02fac4b` made relay packaging robust on a fresh Buildroot overlay by creating `overlay/sbin` before copying the binary. The area/timing example and root README changes are currently uncommitted working-tree additions, so they have no Git rationale beyond their source and README evidence.
 
-For change impact, start with the relevant domain page—[FCS](domain/axis-ethernet-fcs.md) or [PyTorch custom device](domain/pytorch-custom-device.md)—then follow its links to integrations and tests.
+For change impact, start with the relevant domain page—[FCS](domain/axis-ethernet-fcs.md), [area-timing sweep](domain/area-timing-sweep.md), or [PyTorch custom device](domain/pytorch-custom-device.md)—then follow its links to integrations and tests.
