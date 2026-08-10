@@ -1,8 +1,8 @@
 ---
 type: Architecture Overview
 title: Repository Architecture
-description: Structural and runtime architecture of the HardMatrix examples, including shared verification support and the software-to-RTL PyTorch path.
-tags: [architecture, rtl, pytorch, renode]
+description: Structural and runtime architecture of the HardMatrix examples, including shared verification support, parameterized pipeline experiments, and the software-to-RTL PyTorch path.
+tags: [architecture, rtl, pipeline, pytorch, renode]
 ---
 
 # Repository architecture
@@ -14,13 +14,20 @@ This is an examples repository rather than a single deployable system. `examples
 ```text
 examples/
   axis-eth-fcs/           Byte-stream RTL block and cocotb verification
+  area-timing-sweep/      Parameterized ARX and RS pipelines plus observations
   pytorch-custom-device/  Python → C++ → driver/protocol → RTL example
 shared/
   rtl/axis-if/            AXI4-Stream interface and assertions
   python/utils/tb_utils/  cocotb driver, monitor, and traffic generators
 ```
 
-The [AXI Ethernet FCS](../domain/axis-ethernet-fcs.md) example depends directly on both shared areas. The [PyTorch custom device](../domain/pytorch-custom-device.md) mostly carries its own AXI4-Lite interface and verification stack because it demonstrates a larger vertical integration.
+The [AXI Ethernet FCS](../domain/axis-ethernet-fcs.md) example depends directly on both shared areas. The [area-timing sweep](../domain/area-timing-sweep.md) uses the root verification environment but has no shared RTL dependency. The [PyTorch custom device](../domain/pytorch-custom-device.md) mostly carries its own AXI4-Lite interface and verification stack because it demonstrates a larger vertical integration.
+
+## Independent pipeline experiment
+
+`area-timing-sweep` holds two fixed-work, feed-forward datapaths: 64 ARX rounds and a 64-coefficient GF(2^10) Horner evaluation. In each module, elaboration-time integer boundaries partition operations across `PIPELINE_STAGES`, and every partition ends in a register. Both accept one input per cycle without backpressure; only `valid_o` identifies meaningful output. The RS pipeline adds a coefficient-load prerequisite and suppresses inputs until coefficients have been captured.
+
+The checked-in CSV/SVG results compare all depths from 1 through 64 at a 1 GHz synthesis target. They are derived observations rather than a build product of the public core: this repository contains no synthesis target or plot-generation source. The [development workflow](../workflows/development.md) therefore treats cocotb as the ordinary correctness path and the result tables as historical experiment evidence.
 
 ## AXI Ethernet FCS path
 
@@ -67,7 +74,7 @@ Writing the instruction opcode field triggers execution. The Chisel unit snapsho
 
 ## Design intent and history
 
-Both examples and their original self-hosted regression were introduced together by `20a809c`, indicating that the repository's main product is executable, end-to-end reference material rather than a reusable production library. Commit `23d937c` then removed the workflow without replacing it. The architecture remains testable locally, but automation is no longer tracked; the [development workflow](../workflows/development.md) and [testing runbook](../operations/testing-runbook.md) therefore describe local commands as authoritative.
+The original FCS and PyTorch examples and their self-hosted regression were introduced together by `20a809c`, indicating that the repository's main product is executable reference material rather than a reusable production library. Commit `23d937c` then removed the workflow without replacing it. The area/timing experiment is a later working-tree addition, while `02fac4b` fixes fresh Renode relay packaging by creating the Buildroot overlay directory before installation. The architecture remains testable locally, but automation is no longer tracked; the [development workflow](../workflows/development.md) and [testing runbook](../operations/testing-runbook.md) therefore describe local commands as authoritative.
 
 ## Change boundaries
 
