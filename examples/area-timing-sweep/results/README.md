@@ -50,8 +50,10 @@ identify the relevant Pareto front. Timing plots identify the minimum-area
 point meeting 1 GHz with a red arrow and short annotation.
 
 The SVG files were rendered with the canonical HardMatrix Matplotlib style.
-Only the self-contained results and plots are checked in; no plot-generation
-code or private repository dependency is part of this example.
+The public example now includes a simple Hydra/FuseSoC/OpenROAD runner for new
+sweeps without a private repository dependency. The enriched 59-field tables,
+Pareto classifications, and publication SVGs remain curated result artifacts;
+their specialized postprocessing is not part of the simple runner.
 
 ## Selected points
 

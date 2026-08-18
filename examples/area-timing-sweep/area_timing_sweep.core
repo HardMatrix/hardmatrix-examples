@@ -13,6 +13,18 @@ filesets:
       - rtl/rs_chien_horner_pipeline.sv
     file_type: systemVerilogSource
 
+  arx_openroad:
+    files:
+      - synth/arx_pipeline.sdc: {file_type: SDC}
+    depend:
+      - hardmatrix:examples:openroad:0.1.0
+
+  rs_openroad:
+    files:
+      - synth/rs_chien_horner_pipeline.sdc: {file_type: SDC}
+    depend:
+      - hardmatrix:examples:openroad:0.1.0
+
   arx_test:
     files:
       - test/test_arx_pipeline.py: {copyto: .}
@@ -51,3 +63,23 @@ targets:
       verilator_options: [-Wall, -Wno-UNOPTFLAT, --trace, --trace-structs, --assert]
       make_options: [-j8]
       run_options: [--trace]
+
+  openroad_arx:
+    filesets: [arx_rtl, arx_openroad]
+    toplevel: [arx_pipeline]
+    parameters: [PIPELINE_STAGES]
+    flow: generic
+    flow_options:
+      tool: openroad
+      flow_path: /OpenROAD-flow-scripts/flow
+      make_target: synth-report
+
+  openroad_rs:
+    filesets: [rs_rtl, rs_openroad]
+    toplevel: [rs_chien_horner_pipeline]
+    parameters: [PIPELINE_STAGES]
+    flow: generic
+    flow_options:
+      tool: openroad
+      flow_path: /OpenROAD-flow-scripts/flow
+      make_target: synth-report
