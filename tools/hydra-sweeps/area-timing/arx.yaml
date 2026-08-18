@@ -1,0 +1,64 @@
+core: hardmatrix:examples:area_timing_sweep:0.1.0
+target: openroad_arx
+project_root: .
+
+parameters:
+  PIPELINE_STAGES: 4
+
+experiment:
+  clock_mhz: 1000
+  collect_only: false
+
+sweep:
+  x: parameters.PIPELINE_STAGES
+  x_label: PIPELINE_STAGES
+
+fusesoc:
+  clean: true
+  cores_roots:
+    - examples/area-timing-sweep
+    - tools/openroad
+  arguments: []
+
+openroad:
+  PLATFORM: asap7
+  SYNTH_HIERARCHICAL: 0
+  SYNTH_OPT_HIER: 0
+  ABC_AREA: 0
+  ORFS_IMAGE: "openroad/orfs@sha256:c1b25c7d0d74a5c3118843451a2803836ac776140bf29e87fb05a1f84d73aa02"
+
+output:
+  root: build/area-timing-sweep/arx
+  csv: arx_sweep.csv
+  json: arx_sweep.json
+  fields:
+    - PIPELINE_STAGES
+    - clock_mhz
+    - clock_period_ns
+    - PLATFORM
+    - SYNTH_HIERARCHICAL
+    - SYNTH_OPT_HIER
+    - ABC_AREA
+    - ORFS_IMAGE
+    - cell_count
+    - area
+    - setup_wns_ns
+    - setup_tns_ns
+    - setup_worst_startpoint
+    - setup_worst_endpoint
+    - setup_worst_path
+    - power_internal_w
+    - power_switching_w
+    - power_leakage_w
+    - power_total_w
+    - status
+    - work_root
+
+hydra:
+  job:
+    chdir: false
+  run:
+    dir: build/area-timing-sweep/hydra/${now:%Y-%m-%d_%H-%M-%S}
+  sweep:
+    dir: build/area-timing-sweep/hydra/${now:%Y-%m-%d_%H-%M-%S}
+    subdir: arx/stages_${parameters.PIPELINE_STAGES}

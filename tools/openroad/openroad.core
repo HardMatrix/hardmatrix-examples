@@ -1,0 +1,14 @@
+CAPI=2:
+name: hardmatrix:examples:openroad:0.1.0
+description: Reusable OpenROAD Flow Scripts launcher with selectable platform
+
+filesets:
+  flow:
+    files:
+      - Makefile: {file_type: Makefile}
+      - config.mk: {file_type: configFile}
+
+targets:
+  default:
+    filesets:
+      - flow

@@ -8,6 +8,7 @@ Run commands in this README from the repository root.
 
 - [uv](https://docs.astral.sh/uv/)
 - Verilator and standard C/C++ build tools for RTL tests
+- Docker and GNU Make for the OpenROAD area-timing sweep
 
 ## Install
 
@@ -60,6 +61,21 @@ uv run fusesoc \
 
 See [`examples/area-timing-sweep/README.md`](examples/area-timing-sweep/README.md)
 for the RTL, tests, and synthesis sweep results.
+
+Run the public Hydra/OpenROAD sweep for either datapath:
+
+```sh
+uv run hydra-sweep \
+  --config tools/hydra-sweeps/area-timing/arx.yaml -m \
+  'parameters.PIPELINE_STAGES=range(1,65)'
+
+uv run hydra-sweep \
+  --config tools/hydra-sweeps/area-timing/rs.yaml -m \
+  'parameters.PIPELINE_STAGES=range(1,65)'
+```
+
+The sweep runner and OpenROAD launcher are included in this repository. They do
+not require `hardmatrix-utils` or another HardMatrix checkout.
 
 ## PyTorch custom-device tests
 

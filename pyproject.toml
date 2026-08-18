@@ -8,15 +8,18 @@ version = "0.1.0"
 description = "Public examples, demos, and companion code showcasing HardMatrix projects and workflows."
 authors = [{ name = "HardMatrix" }]
 readme = "README.md"
+license = { file = "LICENSE" }
 dependencies = [
     "pytest",
     "cocotb",
     "cocotb-bus@git+https://github.com/cocotb/cocotb-bus",
     "fusesoc",
+    "fusesoc-openroad @ git+https://github.com/HardMatrix/fusesoc-openroad.git",
+    "hydra-core",
 ]
 
 [project.scripts]
-# Example repositories do not currently install command-line tools.
+hydra-sweep = "utils.sweep.cli:main"
 
 [tool.setuptools]
 # Helps when a MANIFEST.in is present; harmless otherwise
