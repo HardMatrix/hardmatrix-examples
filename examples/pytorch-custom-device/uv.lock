@@ -415,7 +415,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "cocotb", specifier = ">=2.0" },
+    { name = "cocotb", specifier = "==2.0.1" },
     { name = "cocotb-bus", specifier = ">=0.3" },
     { name = "fusesoc", specifier = ">=2.4" },
     { name = "ninja", specifier = ">=1.11" },

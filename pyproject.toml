@@ -11,7 +11,7 @@ readme = "README.md"
 license = { file = "LICENSE" }
 dependencies = [
     "pytest",
-    "cocotb",
+    "cocotb==2.0.1",
     "cocotb-bus@git+https://github.com/cocotb/cocotb-bus",
     "fusesoc",
     "fusesoc-openroad @ git+https://github.com/HardMatrix/fusesoc-openroad.git",

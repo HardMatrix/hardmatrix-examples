@@ -131,7 +131,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "cocotb" },
+    { name = "cocotb", specifier = "==2.0.1" },
     { name = "cocotb-bus", git = "https://github.com/cocotb/cocotb-bus" },
     { name = "fusesoc" },
     { name = "fusesoc-openroad", git = "https://github.com/HardMatrix/fusesoc-openroad.git" },
